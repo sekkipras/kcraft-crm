@@ -223,8 +223,26 @@ function closeModal() {
   editingId = null;
 }
 
+/**
+ * Waits for a save, but only up to `ms` — with Firestore offline
+ * persistence the write is already queued locally, so a slow/absent
+ * network shouldn't hold the modal hostage.
+ * Resolves to 'ok', 'timeout', or the Error.
+ */
+function awaitSave(promise, ms = 4000) {
+  return new Promise(resolve => {
+    const t = setTimeout(() => resolve('timeout'), ms);
+    promise.then(
+      () => { clearTimeout(t); resolve('ok'); },
+      err => { clearTimeout(t); resolve(err); }
+    );
+  });
+}
+
+let savingCustomer = false;
 $('customerForm').addEventListener('submit', async e => {
   e.preventDefault();
+  if (savingCustomer) return; // guards against double-click double-saves
   const checked = [...document.querySelectorAll('input[name=product]:checked')].map(cb => cb.value);
   $('customProduct').value.split(',').map(s => s.trim()).filter(Boolean)
     .forEach(p => checked.push(p));
@@ -246,12 +264,24 @@ $('customerForm').addEventListener('submit', async e => {
   };
   if (existing?.invoice) entry.invoice = existing.invoice; // don't lose the attachment on edit
 
-  try {
-    await store.saveCustomer(entry);
+  savingCustomer = true;
+  const btn = $('custSave');
+  const btnHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  const result = await awaitSave(store.saveCustomer(entry));
+  savingCustomer = false;
+  btn.disabled = false;
+  btn.innerHTML = btnHtml;
+
+  if (result === 'ok') {
     showToast(existing ? 'Customer updated!' : 'Walk-in added!', 'success');
     closeModal();
-  } catch (err) {
-    showToast(err.message, 'error');
+  } else if (result === 'timeout') {
+    showToast('Saved on this device — will sync when the connection returns.', 'info');
+    closeModal();
+  } else {
+    showToast(result.message, 'error'); // keep the modal open so nothing typed is lost
   }
 });
 
