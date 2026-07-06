@@ -16,9 +16,13 @@ import {
   canDelete,
   escHtml,
   buildProductTagsHtml,
+  usernameToEmail,
+  sortByNewest,
+  AUTH_EMAIL_DOMAIN,
   USER_ACCOUNTS,
   STATUS_CYCLE
 } from '../utils.js';
+import { isFirebaseConfigured } from '../firebase-config.js';
 
 // ── validateLogin ─────────────────────────────────────────────────────────────
 describe('validateLogin', () => {
@@ -359,4 +363,79 @@ describe('STATUS_CYCLE', () => {
   it('has 5 statuses', () => expect(STATUS_CYCLE.length).toBe(5));
   it('starts with Hot', () => expect(STATUS_CYCLE[0]).toBe('Hot'));
   it('ends with Not Interested', () => expect(STATUS_CYCLE[4]).toBe('Not Interested'));
+});
+
+// ── usernameToEmail ───────────────────────────────────────────────────────────
+describe('usernameToEmail', () => {
+  it('maps a username to the auth pseudo-domain', () => {
+    expect(usernameToEmail('vishnuprakash')).toBe(`vishnuprakash@${AUTH_EMAIL_DOMAIN}`);
+  });
+  it('lowercases and trims', () => {
+    expect(usernameToEmail('  RamKumar ')).toBe(`ramkumar@${AUTH_EMAIL_DOMAIN}`);
+  });
+  it('passes through full emails unchanged (lowercased)', () => {
+    expect(usernameToEmail('Store@Example.com')).toBe('store@example.com');
+  });
+  it('supports a custom domain', () => {
+    expect(usernameToEmail('kani', 'shop.in')).toBe('kani@shop.in');
+  });
+  it('returns empty string for empty input', () => {
+    expect(usernameToEmail('')).toBe('');
+    expect(usernameToEmail(null)).toBe('');
+  });
+});
+
+// ── sortByNewest ──────────────────────────────────────────────────────────────
+describe('sortByNewest', () => {
+  it('sorts newest dateAdded first', () => {
+    const list = [
+      { id: 'a', dateAdded: '2025-01-01T10:00:00.000Z' },
+      { id: 'b', dateAdded: '2025-06-01T10:00:00.000Z' },
+      { id: 'c', dateAdded: '2025-03-01T10:00:00.000Z' }
+    ];
+    expect(sortByNewest(list).map(c => c.id)).toEqual(['b', 'c', 'a']);
+  });
+  it('does not mutate the input array', () => {
+    const list = [
+      { id: 'a', dateAdded: '2025-01-01' },
+      { id: 'b', dateAdded: '2025-06-01' }
+    ];
+    sortByNewest(list);
+    expect(list[0].id).toBe('a');
+  });
+  it('sinks records without dateAdded to the bottom', () => {
+    const list = [{ id: 'x' }, { id: 'y', dateAdded: '2025-01-01' }];
+    expect(sortByNewest(list).map(c => c.id)).toEqual(['y', 'x']);
+  });
+  it('handles empty and null input', () => {
+    expect(sortByNewest([])).toEqual([]);
+    expect(sortByNewest(null)).toEqual([]);
+  });
+});
+
+// ── escHtml single quotes ─────────────────────────────────────────────────────
+describe('escHtml single quotes', () => {
+  it('escapes \' character', () => {
+    expect(escHtml("O'Brien")).toBe('O&#39;Brien');
+  });
+});
+
+// ── isFirebaseConfigured ──────────────────────────────────────────────────────
+describe('isFirebaseConfigured', () => {
+  const realish = {
+    apiKey: 'AIzaFakeKey123', authDomain: 'x.firebaseapp.com', projectId: 'x',
+    storageBucket: 'x.appspot.com', messagingSenderId: '123', appId: '1:123:web:abc'
+  };
+  it('is false for the shipped placeholder config', () => {
+    expect(isFirebaseConfigured()).toBe(false);
+  });
+  it('is true when all values are filled in', () => {
+    expect(isFirebaseConfigured(realish)).toBe(true);
+  });
+  it('is false when any value is still a placeholder', () => {
+    expect(isFirebaseConfigured({ ...realish, appId: 'PASTE_YOUR_APP_ID_HERE' })).toBe(false);
+  });
+  it('is false when a value is empty', () => {
+    expect(isFirebaseConfigured({ ...realish, apiKey: '' })).toBe(false);
+  });
 });

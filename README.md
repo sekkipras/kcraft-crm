@@ -5,160 +5,126 @@ A real-time, multi-user CRM to track walk-in customers, follow-up status, and pr
 
 ---
 
-## 🚀 Deployment Guide (Step-by-Step)
+## How it works
 
-### Step 1 — Install Node.js (one-time setup)
+The app has two modes, switched automatically:
 
-Node.js is required to run tests locally.
+| Mode | When | Where data lives |
+|---|---|---|
+| 💾 **Local** | `firebase-config.js` still has placeholders | This browser only (localStorage) |
+| ☁ **Live sync** | Real Firebase config pasted in | Firestore — every device shares the same data in real time |
 
-1. Go to **https://nodejs.org**
-2. Download the **LTS** version (e.g. v20)
-3. Run the installer — click Next through all steps
-4. Open a **new** PowerShell window and verify:
-   ```
-   node --version   → should show v20.x.x
-   npm --version    → should show 10.x.x
-   ```
-
----
-
-### Step 2 — Create a GitHub Repository
-
-1. Go to **https://github.com** → Sign in (or create a free account)
-2. Click **"New repository"**
-   - Name: `kitchen-craft-crm`
-   - Visibility: **Public** *(required for free GitHub Pages)*
-   - Do NOT tick "Initialize with README"
-3. Click **Create repository**
-4. Copy the repo URL shown (e.g. `https://github.com/YOUR_USERNAME/kitchen-craft-crm.git`)
-
----
-
-### Step 3 — Push the Code to GitHub
-
-Open PowerShell in the project folder and run these commands one by one:
-
-```powershell
-cd "C:\Users\TSP MARKETING\.gemini\antigravity\scratch\kitchen-craft-crm"
-
-git init
-git add .
-git commit -m "Initial Kitchen Craft CRM commit"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/kitchen-craft-crm.git
-git push -u origin main
-```
-
-> Replace `YOUR_USERNAME` with your actual GitHub username.
-
----
-
-### Step 4 — Enable GitHub Pages
-
-1. On GitHub, open your repo → click **Settings**
-2. In the left sidebar → click **Pages**
-3. Under **Source** → select **"GitHub Actions"**
-4. Click **Save**
-
-Your site will be live at:
-**`https://YOUR_USERNAME.github.io/kitchen-craft-crm/`**
-
----
-
-### Step 5 — Set Up Firebase (Real-Time Shared Data)
-
-> Skip this step if you want to test without real-time sync first.
-
-#### 5a. Create Firebase Project
-1. Go to **https://console.firebase.google.com**
-2. Click **"Add project"** → name it `kitchen-craft-crm`
-3. Disable Google Analytics (not needed) → Click **Create project**
-
-#### 5b. Create Firestore Database
-1. In Firebase Console → left menu → **Firestore Database**
-2. Click **Create database**
-3. Choose **Start in test mode** → select a region → **Enable**
-
-#### 5c. Get Your Config Keys
-1. Click ⚙️ (gear icon) → **Project settings**
-2. Scroll to **"Your apps"** → click **`</>`** (Web app)
-3. Register app name as `Kitchen Craft CRM` → click **Register app**
-4. You will see a block like this — **copy all the values**:
-   ```js
-   const firebaseConfig = {
-     apiKey: "AIza...",
-     authDomain: "kitchen-craft-crm.firebaseapp.com",
-     projectId: "kitchen-craft-crm",
-     storageBucket: "kitchen-craft-crm.appspot.com",
-     messagingSenderId: "123456789",
-     appId: "1:123...:web:abc..."
-   };
-   ```
-
-#### 5d. Paste Config into the Project
-Open `firebase-config.js` and replace the placeholder values with your real values from step 5c.
-
-> ⚠️ `firebase-config.js` is in `.gitignore` — it will never be pushed to GitHub.
-> For the live site, you'll paste the config values directly into the `index.html` Firebase script tag.
-
----
-
-### Step 6 — Verify CI is Running
-
-1. Go to your GitHub repo → click **"Actions"** tab
-2. You should see a workflow named **"CI – Test & Deploy"**
-3. Click it to see:
-   - ✅ **test** job — runs all 60+ unit tests
-   - ✅ **deploy** job — deploys your site to GitHub Pages
-
-Every time you push a change, tests run automatically. The site only deploys if all tests pass.
-
----
-
-## 🔐 Login Credentials
-
-| User | Username | Password | Access |
-|---|---|---|---|
-| Vishnu Prakash | `vishnuprakash` | `vishnu@123` | Partner – Full (add, edit, delete) |
-| Ramkumar | `ramkumar` | `ram@123` | Partner – Full (add, edit, delete) |
-| Store Incharge | `store` | `store@123` | Store Staff – Limited (add, edit only) |
-
----
-
-## 🧪 Running Tests Locally
-
-After installing Node.js (Step 1):
-
-```powershell
-cd "C:\Users\TSP MARKETING\.gemini\antigravity\scratch\kitchen-craft-crm"
-npm install
-npm test
-```
-
-To see detailed coverage report:
-```powershell
-npm run test:coverage
-```
-
----
-
-## 📁 Project Structure
+A badge in the header shows which mode you're in. The first time cloud mode
+starts, any customers already saved locally are migrated up to Firestore
+automatically.
 
 ```
 kitchen-craft-crm/
-├── index.html              ← Main app HTML
+├── index.html              ← App HTML (loads app.js as an ES module)
 ├── style.css               ← All styles
-├── app.js                  ← DOM wiring & event handlers
-├── utils.js                ← Pure logic (testable, no DOM)
-├── firebase-config.js      ← Your Firebase keys (NOT on GitHub)
-├── package.json            ← Vitest test setup
-├── .gitignore
-├── tests/
-│   └── utils.test.js       ← 60+ unit tests
-└── .github/
-    └── workflows/
-        └── ci.yml          ← Test + Deploy automation
+├── app.js                  ← UI layer only (DOM wiring & event handlers)
+├── utils.js                ← Pure logic — fully unit-tested
+├── auth.js                 ← Login/logout (Firebase Auth or local fallback)
+├── store.js                ← Customer data (Firestore live sync or localStorage)
+├── firebase-init.js        ← Lazy Firebase SDK loader
+├── firebase-config.js      ← Firebase keys (safe to commit once rules are live)
+├── firestore.rules         ← Database security rules  → paste into Firebase Console
+├── storage.rules           ← Invoice-file security rules → paste into Firebase Console
+├── tests/utils.test.js     ← 90+ unit tests
+└── .github/workflows/ci.yml ← Test + deploy automation
 ```
+
+---
+
+## 🧪 Running locally
+
+Because the app uses ES modules, opening `index.html` directly from the file
+system won't work — serve it over HTTP:
+
+```powershell
+cd kitchen-craft-crm
+npx serve .          # or: python -m http.server 8080
+```
+
+Then open the printed URL (e.g. http://localhost:3000).
+
+Run the tests:
+
+```powershell
+npm install
+npm test             # or: npm run test:coverage
+```
+
+---
+
+## 🔥 Firebase Setup (one-time, ~15 minutes)
+
+### 1. Create the project
+1. Go to **https://console.firebase.google.com** → **Add project** → name it `kitchen-craft-crm`
+2. Disable Google Analytics → **Create project**
+
+### 2. Enable Authentication
+1. Left menu → **Build → Authentication** → **Get started**
+2. **Sign-in method** → enable **Email/Password**
+3. **Users** tab → **Add user** — create these three (pick strong passwords!):
+
+| Staff member | Email to enter | Role |
+|---|---|---|
+| Vishnu Prakash | `vishnuprakash@kitchencraft.crm` | Partner (can delete) |
+| Ramkumar | `ramkumar@kitchencraft.crm` | Partner (can delete) |
+| Store Incharge | `store@kitchencraft.crm` | Store staff |
+
+> The `@kitchencraft.crm` emails are not real mailboxes — they're just IDs.
+> Staff still log in with their plain username (`vishnuprakash`, `ramkumar`,
+> `store`); the app adds the domain automatically.
+
+### 3. Create the Firestore database
+1. Left menu → **Build → Firestore Database** → **Create database**
+2. Choose **Start in production mode** (NOT test mode) → pick region `asia-south1 (Mumbai)` → **Enable**
+3. **Rules** tab → replace everything with the contents of [`firestore.rules`](firestore.rules) → **Publish**
+
+### 4. Enable Storage (for invoice files)
+1. Left menu → **Build → Storage** → **Get started** → production mode
+2. **Rules** tab → replace with the contents of [`storage.rules`](storage.rules) → **Publish**
+
+### 5. Get the config keys and paste them in
+1. ⚙️ **Project settings** → **Your apps** → **`</>`** (Web) → register `Kitchen Craft CRM`
+2. Copy the `firebaseConfig` values into [`firebase-config.js`](firebase-config.js)
+3. Reload the app — the header badge should now say **☁ Live sync**
+
+> ✅ With the rules from steps 3–4 published, these config keys are safe to
+> commit and deploy publicly — they identify the project but grant no access.
+> Do **not** paste keys before publishing the rules.
+
+---
+
+## 🔐 Logging in
+
+Staff log in with a **username** (`vishnuprakash`, `ramkumar`, `store`) and the
+password set in Firebase Console. Partners can add, edit and delete; store
+staff can add and edit. Delete permission is enforced by the database rules,
+not just the UI.
+
+**Before Firebase is configured** the app falls back to the old built-in dev
+accounts (see `USER_ACCOUNTS` in `utils.js`). That fallback is for development
+only — it is not real security.
+
+To change a password later: Firebase Console → Authentication → Users → ⋮ → Reset password.
+
+---
+
+## 🚀 Deploying to GitHub Pages
+
+1. Create a GitHub repository (Public, no README) named `kitchen-craft-crm`
+2. Push the code:
+   ```powershell
+   git remote add origin https://github.com/YOUR_USERNAME/kitchen-craft-crm.git
+   git push -u origin main
+   ```
+3. Repo → **Settings → Pages** → Source: **GitHub Actions**
+4. Every push to `main` runs all tests and, if they pass, deploys to
+   `https://YOUR_USERNAME.github.io/kitchen-craft-crm/`
+5. Check progress under the repo's **Actions** tab
 
 ---
 
@@ -173,18 +139,9 @@ kitchen-craft-crm/
 
 ---
 
-## 📊 Test Coverage Summary
+## 📝 Notes for future work
 
-| Area | Tests | Coverage |
-|---|---|---|
-| Login validation | 11 tests | 100% |
-| Customer filtering | 10 tests | 100% |
-| Status cycling | 7 tests | 100% |
-| Date formatting | 9 tests | 100% |
-| Avatar helpers | 5 tests | 100% |
-| Attender classes | 6 tests | 100% |
-| Access control | 7 tests | 100% |
-| HTML escaping | 7 tests | 100% |
-| Product tags | 6 tests | 100% |
-| Data integrity | 7 tests | 100% |
-| **Total** | **75 tests** | **~75% overall** |
+- CSV export for monthly reporting
+- Follow-up date reminders
+- Card layout for phones (the 10-column table is desktop-first)
+- Per-attender conversion stats

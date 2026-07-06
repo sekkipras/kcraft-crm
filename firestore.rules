@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Kitchen Craft CRM – Firestore security rules
+//
+// Deploy: Firebase Console → Firestore Database → Rules → paste → Publish
+//
+// Anyone NOT signed in gets nothing. Signed-in staff can read and write
+// customers. Only the two partners can delete.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isPartner() {
+      return isSignedIn() && request.auth.token.email in [
+        'vishnuprakash@kitchencraft.crm',
+        'ramkumar@kitchencraft.crm'
+      ];
+    }
+
+    match /customers/{customerId} {
+      allow read, create, update: if isSignedIn();
+      allow delete: if isPartner();
+    }
+
+    // Everything else is locked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Kitchen Craft CRM – Storage security rules (invoice files)
+//
+// Deploy: Firebase Console → Storage → Rules → paste → Publish
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isPartner() {
+      return isSignedIn() && request.auth.token.email in [
+        'vishnuprakash@kitchencraft.crm',
+        'ramkumar@kitchencraft.crm'
+      ];
+    }
+
+    match /invoices/{customerId}/{fileName} {
+      allow read: if isSignedIn();
+      // Uploads: signed-in staff, max 5 MB, PDF or JPEG only.
+      allow write: if isSignedIn()
+        && request.resource.size < 5 * 1024 * 1024
+        && (request.resource.contentType == 'application/pdf'
+            || request.resource.contentType == 'image/jpeg');
+      allow delete: if isPartner();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

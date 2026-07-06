@@ -166,7 +166,41 @@ export function escHtml(s) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ── AUTH EMAIL MAPPING ────────────────────────────────────────────────────────
+/**
+ * The pseudo-domain used for Firebase Auth accounts. Staff log in with a
+ * username; we map it to `<username>@kitchencraft.crm` behind the scenes.
+ */
+export const AUTH_EMAIL_DOMAIN = 'kitchencraft.crm';
+
+/**
+ * Maps a login username to the Firebase Auth email.
+ * If the input already looks like an email, it is used as-is.
+ * @param {string} username
+ * @param {string} domain
+ * @returns {string}
+ */
+export function usernameToEmail(username, domain = AUTH_EMAIL_DOMAIN) {
+  const u = String(username || '').trim().toLowerCase();
+  if (!u) return '';
+  return u.includes('@') ? u : `${u}@${domain}`;
+}
+
+// ── SORTING ───────────────────────────────────────────────────────────────────
+/**
+ * Returns a new array sorted newest-first by dateAdded (ISO strings).
+ * Records without dateAdded sink to the bottom.
+ * @param {Array} customers
+ * @returns {Array}
+ */
+export function sortByNewest(customers) {
+  return [...(customers || [])].sort(
+    (a, b) => String(b.dateAdded || '').localeCompare(String(a.dateAdded || ''))
+  );
 }
 
 // ── PRODUCT TAG BUILDER ───────────────────────────────────────────────────────

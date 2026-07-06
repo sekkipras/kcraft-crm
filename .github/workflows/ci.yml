@@ -62,11 +62,16 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
+      - name: Collect site files
+        run: |
+          mkdir _site
+          cp index.html style.css app.js utils.js auth.js store.js \
+             firebase-init.js firebase-config.js _site/
+
       - name: Upload site files to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload only the files needed for the web app (exclude node_modules, tests, workflows)
-          path: '.'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment
