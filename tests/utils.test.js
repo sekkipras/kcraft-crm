@@ -426,8 +426,16 @@ describe('isFirebaseConfigured', () => {
     apiKey: 'AIzaFakeKey123', authDomain: 'x.firebaseapp.com', projectId: 'x',
     storageBucket: 'x.appspot.com', messagingSenderId: '123', appId: '1:123:web:abc'
   };
-  it('is false for the shipped placeholder config', () => {
-    expect(isFirebaseConfigured()).toBe(false);
+  it('is false for a placeholder config', () => {
+    const placeholders = {
+      apiKey: 'PASTE_YOUR_API_KEY_HERE', authDomain: 'PASTE_YOUR_AUTH_DOMAIN_HERE',
+      projectId: 'PASTE_YOUR_PROJECT_ID_HERE', storageBucket: 'PASTE_YOUR_STORAGE_BUCKET_HERE',
+      messagingSenderId: 'PASTE_YOUR_MESSAGING_SENDER_ID_HERE', appId: 'PASTE_YOUR_APP_ID_HERE'
+    };
+    expect(isFirebaseConfigured(placeholders)).toBe(false);
+  });
+  it('is true for the shipped config once real keys are pasted in', () => {
+    expect(isFirebaseConfigured()).toBe(true);
   });
   it('is true when all values are filled in', () => {
     expect(isFirebaseConfigured(realish)).toBe(true);

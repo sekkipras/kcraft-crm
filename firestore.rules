@@ -16,8 +16,8 @@ service cloud.firestore {
 
     function isPartner() {
       return isSignedIn() && request.auth.token.email in [
-        'vishnuprakash@kitchencraft.crm',
-        'ramkumar@kitchencraft.crm'
+        'vishnuprakash@kcraft.crm',
+        'ramkumar@kcraft.crm'
       ];
     }
 

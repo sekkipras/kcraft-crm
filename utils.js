@@ -173,9 +173,10 @@ export function escHtml(s) {
 // ── AUTH EMAIL MAPPING ────────────────────────────────────────────────────────
 /**
  * The pseudo-domain used for Firebase Auth accounts. Staff log in with a
- * username; we map it to `<username>@kitchencraft.crm` behind the scenes.
+ * username; we map it to `<username>@kcraft.crm` behind the scenes.
+ * Must match the emails of the users created in Firebase Console.
  */
-export const AUTH_EMAIL_DOMAIN = 'kitchencraft.crm';
+export const AUTH_EMAIL_DOMAIN = 'kcraft.crm';
 
 /**
  * Maps a login username to the Firebase Auth email.

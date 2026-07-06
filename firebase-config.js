@@ -15,12 +15,12 @@
  */
 
 export const firebaseConfig = {
-  apiKey:            "PASTE_YOUR_API_KEY_HERE",
-  authDomain:        "PASTE_YOUR_AUTH_DOMAIN_HERE",
-  projectId:         "PASTE_YOUR_PROJECT_ID_HERE",
-  storageBucket:     "PASTE_YOUR_STORAGE_BUCKET_HERE",
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
-  appId:             "PASTE_YOUR_APP_ID_HERE"
+  apiKey:            "AIzaSyBQQwHnItFcRgbdY0aVa5zGS2DGr0V_hsw",
+  authDomain:        "kcraft-crm.firebaseapp.com",
+  projectId:         "kcraft-crm",
+  storageBucket:     "kcraft-crm.firebasestorage.app",
+  messagingSenderId: "377202791831",
+  appId:             "1:377202791831:web:e87c11091d5023b84660d2"
 };
 
 /**

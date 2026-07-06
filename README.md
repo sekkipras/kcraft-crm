@@ -70,11 +70,11 @@ npm test             # or: npm run test:coverage
 
 | Staff member | Email to enter | Role |
 |---|---|---|
-| Vishnu Prakash | `vishnuprakash@kitchencraft.crm` | Partner (can delete) |
-| Ramkumar | `ramkumar@kitchencraft.crm` | Partner (can delete) |
-| Store Incharge | `store@kitchencraft.crm` | Store staff |
+| Vishnu Prakash | `vishnuprakash@kcraft.crm` | Partner (can delete) |
+| Ramkumar | `ramkumar@kcraft.crm` | Partner (can delete) |
+| Store Incharge | `store@kcraft.crm` | Store staff |
 
-> The `@kitchencraft.crm` emails are not real mailboxes — they're just IDs.
+> The `@kcraft.crm` emails are not real mailboxes — they're just IDs.
 > Staff still log in with their plain username (`vishnuprakash`, `ramkumar`,
 > `store`); the app adds the domain automatically.
 

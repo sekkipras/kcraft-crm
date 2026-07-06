@@ -3,7 +3,7 @@
  *
  * Cloud mode (Firebase configured): real sign-in via Firebase Auth
  *   email/password. Staff type their username; it maps to
- *   <username>@kitchencraft.crm (see utils.usernameToEmail). Create those
+ *   <username>@kcraft.crm (see utils.usernameToEmail). Create those
  *   accounts once in Firebase Console → Authentication → Users.
  *
  * Local mode (Firebase not configured yet): falls back to the accounts
