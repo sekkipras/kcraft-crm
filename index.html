@@ -96,6 +96,9 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Walk-in
     </button>
+    <button class="btn-logout" id="btnChangePwd" title="Change Password">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+    </button>
     <button class="btn-logout" id="btnLogout" title="Logout">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
     </button>
@@ -270,6 +273,34 @@
       <button class="btn-cancel" id="deleteCancelBtn">Cancel</button>
       <button class="btn-delete-confirm" id="deleteConfirmBtn">Yes, Delete</button>
     </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="pwdOverlay">
+  <div class="modal pwd-modal">
+    <div class="modal-header">
+      <div class="modal-title-group"><span class="modal-icon">🔑</span><h2 class="modal-title">Change Password</h2></div>
+      <button class="modal-close" id="pwdClose">✕</button>
+    </div>
+    <form class="modal-form" id="pwdForm" autocomplete="off">
+      <div class="form-group full">
+        <label for="pwdCurrent">Current Password <span class="req">*</span></label>
+        <input type="password" id="pwdCurrent" placeholder="Enter current password" autocomplete="current-password" required/>
+      </div>
+      <div class="form-group full">
+        <label for="pwdNew">New Password <span class="req">*</span></label>
+        <input type="password" id="pwdNew" placeholder="At least 6 characters" autocomplete="new-password" required/>
+      </div>
+      <div class="form-group full">
+        <label for="pwdConfirm">Confirm New Password <span class="req">*</span></label>
+        <input type="password" id="pwdConfirm" placeholder="Re-type new password" autocomplete="new-password" required/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="pwdCancel">Cancel</button>
+        <button type="submit" class="btn-save" id="pwdSave">🔑 Update Password</button>
+      </div>
+    </form>
   </div>
 </div>
 

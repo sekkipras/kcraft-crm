@@ -191,6 +191,23 @@ export function usernameToEmail(username, domain = AUTH_EMAIL_DOMAIN) {
   return u.includes('@') ? u : `${u}@${domain}`;
 }
 
+// ── PASSWORD VALIDATION ───────────────────────────────────────────────────────
+/**
+ * Validates a new password + confirmation.
+ * @param {string} newPassword
+ * @param {string} confirmPassword
+ * @returns {string} empty string when valid, otherwise the error message
+ */
+export function validateNewPassword(newPassword, confirmPassword) {
+  if (!newPassword || newPassword.length < 6) {
+    return 'New password must be at least 6 characters.';
+  }
+  if (newPassword !== confirmPassword) {
+    return 'The two passwords do not match.';
+  }
+  return '';
+}
+
 // ── SORTING ───────────────────────────────────────────────────────────────────
 /**
  * Returns a new array sorted newest-first by dateAdded (ISO strings).

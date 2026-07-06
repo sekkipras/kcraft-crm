@@ -10,7 +10,7 @@
 import {
   STATUS_EMOJI, filterCustomers, cycleStatus, formatDelivery, formatDate,
   avatarColor, initials, buildAttenderClass, canDelete, escHtml,
-  buildProductTagsHtml, sortByNewest
+  buildProductTagsHtml, sortByNewest, validateNewPassword
 } from './utils.js';
 import * as auth from './auth.js';
 import * as store from './store.js';
@@ -29,6 +29,7 @@ let searchQuery    = '';
 const modalOverlay  = $('modalOverlay');
 const viewOverlay   = $('viewOverlay');
 const deleteOverlay = $('deleteOverlay');
+const pwdOverlay    = $('pwdOverlay');
 
 // ── TOAST ─────────────────────────────────────────────────────────────────
 let toastTimer;
@@ -410,6 +411,46 @@ $('invoiceFileInput').addEventListener('change', async function () {
   }
 });
 
+// ── CHANGE PASSWORD ───────────────────────────────────────────────────────
+function closePwdModal() {
+  pwdOverlay.classList.remove('open');
+  $('pwdForm').reset();
+}
+
+$('btnChangePwd').addEventListener('click', () => {
+  if (!auth.canChangePassword()) {
+    showToast('Password change works only after Firebase cloud sync is set up.', 'info');
+    return;
+  }
+  $('pwdForm').reset();
+  pwdOverlay.classList.add('open');
+  setTimeout(() => $('pwdCurrent').focus(), 280);
+});
+
+$('pwdForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const validationError = validateNewPassword($('pwdNew').value, $('pwdConfirm').value);
+  if (validationError) { showToast(validationError, 'error'); return; }
+
+  const btn = $('pwdSave');
+  btn.disabled = true;
+  btn.textContent = 'Updating…';
+  try {
+    await auth.changePassword($('pwdCurrent').value, $('pwdNew').value);
+    closePwdModal();
+    showToast('Password updated! Use the new password from your next sign-in.', 'success');
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔑 Update Password';
+  }
+});
+
+$('pwdClose').addEventListener('click', closePwdModal);
+$('pwdCancel').addEventListener('click', closePwdModal);
+pwdOverlay.addEventListener('click', e => { if (e.target === pwdOverlay) closePwdModal(); });
+
 // ── TABS & SEARCH ─────────────────────────────────────────────────────────
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -437,7 +478,7 @@ deleteOverlay.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    closeModal(); closeViewModal();
+    closeModal(); closeViewModal(); closePwdModal();
     deleteOverlay.classList.remove('open');
   }
 });

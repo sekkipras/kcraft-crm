@@ -102,6 +102,47 @@ export async function login(username, password) {
   onUserCb(toProfile(user));
 }
 
+/** True when real password changes are possible (cloud mode only). */
+export function canChangePassword() {
+  return !!fb;
+}
+
+/**
+ * Changes the signed-in user's password. Firebase requires proving the
+ * current password first (re-authentication), so both are needed.
+ * Throws an Error with a user-friendly message on failure.
+ */
+export async function changePassword(currentPassword, newPassword) {
+  if (!fb) {
+    throw new Error('Password change works only after Firebase cloud sync is set up.');
+  }
+  const user = fb.auth.currentUser;
+  if (!user) throw new Error('You are not signed in.');
+
+  const cred = fb.authApi.EmailAuthProvider.credential(user.email, currentPassword);
+  try {
+    await fb.authApi.reauthenticateWithCredential(user, cred);
+  } catch (err) {
+    const code = err?.code || '';
+    if (code.includes('invalid-credential') || code.includes('wrong-password')) {
+      throw new Error('Current password is incorrect.');
+    }
+    if (code.includes('too-many-requests')) {
+      throw new Error('Too many attempts. Please wait a minute and try again.');
+    }
+    throw new Error('Could not verify the current password. Please try again.');
+  }
+
+  try {
+    await fb.authApi.updatePassword(user, newPassword);
+  } catch (err) {
+    if ((err?.code || '').includes('weak-password')) {
+      throw new Error('New password is too weak — use at least 6 characters.');
+    }
+    throw new Error('Could not update the password. Please try again.');
+  }
+}
+
 /** Signs out and notifies via onUser(null). */
 export async function logout() {
   if (fb) {

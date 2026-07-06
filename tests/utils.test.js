@@ -18,6 +18,7 @@ import {
   buildProductTagsHtml,
   usernameToEmail,
   sortByNewest,
+  validateNewPassword,
   AUTH_EMAIL_DOMAIN,
   USER_ACCOUNTS,
   STATUS_CYCLE
@@ -417,6 +418,22 @@ describe('sortByNewest', () => {
 describe('escHtml single quotes', () => {
   it('escapes \' character', () => {
     expect(escHtml("O'Brien")).toBe('O&#39;Brien');
+  });
+});
+
+// ── validateNewPassword ───────────────────────────────────────────────────────
+describe('validateNewPassword', () => {
+  it('accepts a matching pair of 6+ characters', () => {
+    expect(validateNewPassword('secret1', 'secret1')).toBe('');
+  });
+  it('rejects passwords under 6 characters', () => {
+    expect(validateNewPassword('abc', 'abc')).toMatch(/at least 6/);
+  });
+  it('rejects empty password', () => {
+    expect(validateNewPassword('', '')).toMatch(/at least 6/);
+  });
+  it('rejects mismatched confirmation', () => {
+    expect(validateNewPassword('secret1', 'secret2')).toMatch(/not match/);
   });
 });
 
