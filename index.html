@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kitchen Craft CRM – Bosch & Siemens Dealer, Madurai</title>
+  <meta name="description" content="CRM for Kitchen Craft – Bosch & Siemens Dealer, Kalavasal Bypass, Madurai."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg width="56" height="56" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="10" fill="url(#lg1)"/>
+        <path d="M8 26 L14 10 L18 20 L22 14 L28 26 Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <circle cx="18" cy="8" r="3" fill="#FFD700"/>
+        <defs><linearGradient id="lg1" x1="0" y1="0" x2="36" y2="36">
+          <stop offset="0%" stop-color="#E63946"/><stop offset="100%" stop-color="#FF6B35"/>
+        </linearGradient></defs>
+      </svg>
+    </div>
+    <h1 class="login-brand">Kitchen Craft</h1>
+    <p class="login-sub">Bosch &amp; Siemens Authorized Dealer · Madurai</p>
+    <p class="login-prompt">Sign in to your account</p>
+
+    <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div class="login-field">
+        <label for="loginUsername">Username</label>
+        <div class="login-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" required/>
+        </div>
+      </div>
+      <div class="login-field">
+        <label for="loginPassword">Password</label>
+        <div class="login-input-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password" required/>
+          <button type="button" class="eye-btn" id="eyeBtn" onclick="togglePwd()" title="Show/Hide password">👁</button>
+        </div>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button type="submit" class="login-btn" id="loginBtn">Sign In →</button>
+    </form>
+
+    <div class="login-hint">
+      <details>
+        <summary>Default Credentials (click to view)</summary>
+        <table class="cred-table">
+          <tr><th>User</th><th>Username</th><th>Password</th><th>Access</th></tr>
+          <tr><td>Vishnu Prakash</td><td>vishnuprakash</td><td>vishnu@123</td><td>Partner – Full</td></tr>
+          <tr><td>Ramkumar</td><td>ramkumar</td><td>ram@123</td><td>Partner – Full</td></tr>
+          <tr><td>Store Incharge</td><td>store</td><td>store@123</td><td>Store – Limited</td></tr>
+        </table>
+      </details>
+    </div>
+    <p class="login-footer">Kitchen Craft CRM &copy; 2025 · Kalavasal Bypass, Madurai</p>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="appContent" style="display:none;">
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="brand-logo">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" rx="10" fill="url(#grad1)"/>
+        <path d="M8 26 L14 10 L18 20 L22 14 L28 26 Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <circle cx="18" cy="8" r="3" fill="#FFD700"/>
+        <defs><linearGradient id="grad1" x1="0" y1="0" x2="36" y2="36">
+          <stop offset="0%" stop-color="#E63946"/><stop offset="100%" stop-color="#FF6B35"/>
+        </linearGradient></defs>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1 class="brand-name">Kitchen Craft</h1>
+      <p class="brand-sub">Bosch &amp; Siemens Authorized Dealer · Kalavasal Bypass, Madurai</p>
+    </div>
+  </div>
+  <div class="header-stats">
+    <div class="stat-chip"><span class="stat-num" id="totalCount">0</span><span class="stat-label">Total</span></div>
+    <div class="stat-chip hot"><span class="stat-num" id="hotCount">0</span><span class="stat-label">Hot</span></div>
+    <div class="stat-chip warm"><span class="stat-num" id="warmCount">0</span><span class="stat-label">Warm</span></div>
+    <div class="stat-chip converted"><span class="stat-num" id="convertedCount">0</span><span class="stat-label">Converted</span></div>
+  </div>
+  <div class="header-right">
+    <div class="logged-user-chip" id="loggedUserChip">
+      <div class="logged-avatar" id="loggedAvatar"></div>
+      <div class="logged-info">
+        <span class="logged-name" id="loggedUserName"></span>
+        <span class="logged-role" id="loggedUserRole"></span>
+      </div>
+    </div>
+    <button class="btn-add-header" id="btnOpenModal">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Walk-in
+    </button>
+    <button class="btn-logout" id="btnLogout" title="Logout" onclick="logout()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="tabs">
+    <button class="tab active" data-filter="all">All Customers</button>
+    <button class="tab" data-filter="Hot">🔥 Hot</button>
+    <button class="tab" data-filter="Warm">🌤 Warm</button>
+    <button class="tab" data-filter="Cold">❄️ Cold</button>
+    <button class="tab" data-filter="Converted">✅ Converted</button>
+    <button class="tab" data-filter="Not Interested">🚫 Not Interested</button>
+  </div>
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Search name or phone…"/>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🏪</div>
+    <h2>No customers yet</h2>
+    <p>Start by adding your first walk-in customer using the <strong>+ Add Walk-in</strong> button.</p>
+  </div>
+  <div class="table-wrapper" id="tableWrapper" style="display:none;">
+    <table class="crm-table" id="crmTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Attender</th>
+          <th>Products Seen</th>
+          <th>Price Quoted</th>
+          <th>Expected Delivery</th>
+          <th>Follow Status</th>
+          <th>Date Added</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- ===== ADD/EDIT MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <span class="modal-icon">👤</span>
+        <h2 class="modal-title" id="modalTitle">New Walk-in Customer</h2>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <form class="modal-form" id="customerForm" autocomplete="off">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="custName">Customer Name <span class="req">*</span></label>
+          <input type="text" id="custName" placeholder="e.g. Ramesh Kumar" required/>
+        </div>
+        <div class="form-group">
+          <label for="custPhone">Phone Number <span class="req">*</span></label>
+          <input type="tel" id="custPhone" placeholder="e.g. 9876543210" maxlength="10" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="custAttender">Store Attender <span class="req">*</span></label>
+          <select id="custAttender" required>
+            <option value="">-- Select Attender --</option>
+            <option value="Sangeetha">Sangeetha</option>
+            <option value="Kani">Kani</option>
+            <option value="Ramkumar">Ramkumar</option>
+            <option value="VishnuPrakash">Vishnu Prakash</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="custStatus">Follow Status <span class="req">*</span></label>
+          <select id="custStatus" required>
+            <option value="">-- Select Status --</option>
+            <option value="Hot">🔥 Hot</option>
+            <option value="Warm">🌤 Warm</option>
+            <option value="Cold">❄️ Cold</option>
+            <option value="Converted">✅ Converted</option>
+            <option value="Not Interested">🚫 Not Interested</option>
+          </select>
+        </div>
+      </div>
+      <!-- PRODUCTS -->
+      <div class="form-group full">
+        <label>Products Seen <span class="req">*</span></label>
+        <div class="products-grid">
+          <div class="product-category">
+            <div class="cat-label bosch-label">🔴 Bosch</div>
+            <div class="product-chips">
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Chimney"/> Chimney</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Gas Hob"/> Gas Hob</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Microwave"/> Microwave</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Oven"/> Oven</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Fridge"/> Fridge</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Dishwasher"/> Dishwasher</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Washing Machine"/> Washing Machine</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Coffee Machine"/> Coffee Machine</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Bosch Mixer Grinder"/> Mixer Grinder</label>
+            </div>
+          </div>
+          <div class="product-category">
+            <div class="cat-label siemens-label">🔵 Siemens</div>
+            <div class="product-chips">
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Chimney"/> Chimney</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Gas Hob"/> Gas Hob</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Microwave"/> Microwave</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Oven"/> Oven</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Fridge"/> Fridge</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Dishwasher"/> Dishwasher</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Washing Machine"/> Washing Machine</label>
+              <label class="chip-label"><input type="checkbox" name="product" value="Siemens Coffee Machine"/> Coffee Machine</label>
+            </div>
+          </div>
+        </div>
+        <input type="text" id="customProduct" placeholder="Or type other product…" style="margin-top:10px;"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="custPrice">Price Quoted (₹)</label>
+          <input type="number" id="custPrice" placeholder="e.g. 45000" min="0"/>
+        </div>
+        <div class="form-group">
+          <label for="custDelivery">Expected Delivery Date</label>
+          <input type="date" id="custDelivery"/>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label for="custNotes">Remarks / Notes</label>
+        <textarea id="custNotes" rows="3" placeholder="Any extra details…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" id="btnCancel">Cancel</button>
+        <button type="submit" class="btn-save">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save Customer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- VIEW MODAL -->
+<div class="modal-overlay" id="viewOverlay">
+  <div class="modal view-modal" id="viewModal">
+    <div class="modal-header">
+      <div class="modal-title-group"><span class="modal-icon">📋</span><h2 class="modal-title">Customer Details</h2></div>
+      <button class="modal-close" id="viewClose">✕</button>
+    </div>
+    <div class="view-body" id="viewBody"></div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="modal delete-modal">
+    <div class="delete-icon">🗑️</div>
+    <h2>Delete Customer?</h2>
+    <p>This action cannot be undone. The record will be permanently removed.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="deleteCancelBtn">Cancel</button>
+      <button class="btn-delete-confirm" id="deleteConfirmBtn">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden invoice file input -->
+<input type="file" id="invoiceFileInput" accept=".pdf,.jpg,.jpeg" style="display:none"/>
+
+</div><!-- end #appContent -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
